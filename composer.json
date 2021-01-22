@@ -1,0 +1,19 @@
+{
+    "name": "zharkov/bitrix-id-mapper",
+    "type": "library",
+    "authors": [
+        {
+            "name": "konstantin.zharkov",
+            "email": "konstantin.zharkov@sitesoft.ru"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Interfaces\\": "interfaces/",
+            "Services\\": "services/"
+        },
+        "files": ["Constants.php"]
+    }
+}
