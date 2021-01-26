@@ -2,7 +2,7 @@
 
 namespace Services;
 
-use Interfaces\DbServiceInterface;
+use DbServiceInterface;
 
 abstract class AbstractService implements DbServiceInterface
 {
