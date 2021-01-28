@@ -1,6 +1,6 @@
 <?php
 
-namespace Interfaces;
+namespace Services;
 
 interface DbServiceInterface
 {

@@ -2,8 +2,6 @@
 
 namespace Services;
 
-use DbServiceInterface;
-
 abstract class AbstractService implements DbServiceInterface
 {
     protected static $list;
