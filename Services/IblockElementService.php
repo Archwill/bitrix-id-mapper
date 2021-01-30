@@ -1,15 +1,15 @@
 <?php
 
+
 namespace Services;
 
-use Bitrix\Iblock\SectionTable;
 
+use Bitrix\Iblock\Iblock;
 use Bitrix\Main\Data\Cache;
 use Services\Traits\BitrixEntityTrait;
 use Services\AbstractService;
-use Bitrix\Iblock\Model\Section;
 
-class IblockSectionService extends AbstractService
+class IblockElementService extends AbstractService
 {
     use BitrixEntityTrait;
 
@@ -17,7 +17,7 @@ class IblockSectionService extends AbstractService
 
     private function getCacheId()
     {
-        return "iblock_section_" . implode("_", [
+        return "iblock_element_" . implode("_", [
                 $this->iblockId,
                 $this->offset,
                 $this->limit,
@@ -31,14 +31,13 @@ class IblockSectionService extends AbstractService
         if ($this->iblockId > 0) {
 
             $cache = Cache::createInstance();
-            if ($cache->initCache($this->cacheTime, $this->getCacheId(), "/iblock_section_" . $this->iblockId)) {
+            if ($cache->initCache($this->cacheTime, $this->getCacheId(), "/iblock_element_" . $this->iblockId)) {
                 $result = $cache->getVars();
             } elseif ($cache->startDataCache()) {
                 $result = array();
 
-                $sectionEntity = Section::compileEntityByIblock($this->iblockId);
-
-                $query = $sectionEntity::query();
+                $iblock = Iblock::wakeUp($this->iblockId);
+                $query = $iblock->getEntityDataClass()::query();
 
                 $result = $this->buildQuery($query)->fetchAll();
 
