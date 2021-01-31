@@ -94,6 +94,14 @@ trait BitrixEntityTrait
         return $result;
     }
 
+    public function getEntityById($iblockId, $id, $select = []){
+        $result = $this->setIblock($iblockId)
+            ->setFilter(["ID" => $id])
+            ->setSelect($select)
+            ->getListFromDb();
+        return array_shift($result);
+    }
+
     public function getEntityByCode($iblockId, $code, $select = []){
         $result = $this->setIblock($iblockId)
             ->setFilter(["CODE" => $code])
