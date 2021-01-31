@@ -9,8 +9,8 @@
   $iblockList = new Constants($iblockService);
   
   /**
-    * Получение ID инфоблока по ID его типа и коду
-    */
+   * Получение ID инфоблока по ID его типа и коду
+   */
   $iblockID = $iblockList->iblock_type_id["iblock_code"]["ID"];
 ```
 
@@ -51,15 +51,21 @@
   }
   
   /**
-    * Передача массива $arSelect для выборки полей и свойств элементов
-    */
+   * Передача массива $arSelect для выборки полей и свойств элементов
+   */
     
    $arSelect = ["DETAIL_TEXT", "PROPERTY_GALLERY"];
    $elements = $elementService->getEntitiesByFilter($iblockID, $arFilter, $arSelect);
    
    /**
-     * Пагинация
-     */
+    * Кеширование
+    */
+    
+   $elementService->setCacheTime(36000000);
+   
+   /**
+    * Пагинация
+    */
      
    $nav = new Main\UI\PageNavigation("pagination-example");
    $nav->allowAllRecords(true)
