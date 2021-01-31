@@ -21,7 +21,7 @@
   
   /*...*/
   
-  $elementService = new IblockElementService();
+  $elementService = new IblockElementService(); //для разделов IblockSectionService
   $element = $elementService->getEntityByID($iblockID, $elementID);
 ```
 
