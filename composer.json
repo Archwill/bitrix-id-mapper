@@ -1,6 +1,6 @@
 {
     "name": "zharkov/bitrix-id-mapper",
-    "description": "library for automatical bitrix entity id detection",
+    "description": "library for automatic bitrix entity id detection",
     "type": "library",
     "authors": [
         {
@@ -8,6 +8,7 @@
             "email": "konstantin.zharkov@sitesoft.ru"
         }
     ],
+    "version": "1.0.0-dev",
     "minimum-stability": "dev",
     "require": {},
     "autoload": {
