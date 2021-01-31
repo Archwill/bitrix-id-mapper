@@ -3,12 +3,13 @@
 namespace Services;
 
 use Bitrix\Iblock\Iblock;
-use Services\Traits\BitrixEntity;
-use Services\Traits\StandardEntityOperations;
+use Services\Interfaces\HelperInterface;
+use Services\Traits\CacheOperations;
+use Services\Traits\HelperOperations;
 
-class IblockElementService extends AbstractService
+class IblockElementService extends AbstractService implements HelperInterface
 {
-    use BitrixEntity, StandardEntityOperations;
+    use CacheOperations, HelperOperations;
 
     protected static $list;
 
