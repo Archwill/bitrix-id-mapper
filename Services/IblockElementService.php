@@ -43,7 +43,7 @@ class IblockElementService extends AbstractService implements HelperInterface
         if ($this->cacheTime > 0) {
             $this->setCachePath("/iblock_element_" . $this->iblockId);
             $this->setCacheId($this->buildCacheId());
-            return $this->cacheResult([self::class, "getElements"]);
+            return $this->cacheResult([$this, "getElements"]);
         } else {
             return $this->getElements();
         }
