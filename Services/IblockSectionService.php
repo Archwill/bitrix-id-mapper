@@ -3,11 +3,12 @@
 namespace Services;
 
 use Bitrix\Iblock\Model\Section;
-use Services\Traits\BitrixEntityTrait;
+use Services\Traits\BitrixEntity;
+use Services\Traits\StandardEntityOperations;
 
 class IblockSectionService extends AbstractService
 {
-    use BitrixEntityTrait;
+    use BitrixEntity, StandardEntityOperations;
 
     protected static $list;
 
