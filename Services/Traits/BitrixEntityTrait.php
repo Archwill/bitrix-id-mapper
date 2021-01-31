@@ -3,6 +3,7 @@
 
 namespace Services\Traits;
 
+use Bitrix\Main\Data\Cache;
 
 trait BitrixEntityTrait
 {
@@ -14,7 +15,9 @@ trait BitrixEntityTrait
         "IBLOCK_ID"
     ];
 
-    private $cacheTime = 36000000;
+    private $cacheTime = 0;
+    private $cachePath;
+    private $cacheId;
 
     private $filter = [
 
@@ -23,34 +26,32 @@ trait BitrixEntityTrait
     private $offset;
     private $limit;
 
-    public function setIblock($id)
+    public function __call($name, $arguments)
     {
-        $this->iblockId = $id;
-        return $this;
-    }
-
-    public function setPagination($offset, $limit)
-    {
-        $this->offset = $offset;
-        $this->limit = $limit;
-        return $this;
-    }
-
-    public function setSelect(Array $select)
-    {
-        $this->select = array_merge($this->select, $select);
-        return $this;
-    }
-
-    public function setFilter(Array $filter)
-    {
-        $this->filter = array_merge($this->filter, $filter);
-        return $this;
-    }
-
-    public function setCacheTime($cacheTime)
-    {
-        $this->cacheTime = $cacheTime;
+        switch ($name) {
+            case "setIblock":
+                $this->iblockId = array_shift($arguments);
+                break;
+            case "setPagination":
+                $this->offset = array_shift($arguments);
+                $this->limit = array_shift($arguments);
+                break;
+            case "setSelect":
+                $this->select = array_merge($this->select, array_shift($arguments));
+                break;
+            case "setFilter":
+                $this->filter = array_merge($this->filter, array_shift($arguments));
+                break;
+            case "setCacheTime":
+                $this->cacheTime = array_shift($arguments);
+                break;
+            case "setCacheId":
+                $this->cacheId = array_shift($arguments);
+                break;
+            case "setCachePath":
+                $this->cachePath = array_shift($arguments);
+                break;
+        }
         return $this;
     }
 
@@ -70,13 +71,42 @@ trait BitrixEntityTrait
         return $query;
     }
 
-    public function getResult($name)
+    private function cacheResult(Callable $getResult)
+    {
+        $cache = Cache::createInstance();
+        if ($cache->initCache($this->cacheTime, $this->cacheId, $this->cachePath)) {
+            $result = $cache->getVars();
+        } elseif ($cache->startDataCache()) {
+            $result = $getResult();
+
+            $cache->endDataCache($result);
+        }
+
+        return $result;
+    }
+
+    public function getResult($name = null)
     {
         $result = [];
         foreach (static::$list as $item) {
             $result[$item["CODE"] ?? $item["ID"]] = $item;
         }
         return $result;
+    }
+
+    public function getEntityByCode($iblockId, $code, $select = []){
+        $result = $this->setIblock($iblockId)
+            ->setFilter(["CODE" => $code])
+            ->setSelect($select)
+            ->getListFromDb();
+        return array_shift($result);
+    }
+
+    public function getEntitiesByFilter($iblockId, $filter, $select = []){
+        return $this->setIblock($iblockId)
+            ->setFilter($filter)
+            ->setSelect($select)
+            ->getListFromDb();
     }
 
 }
