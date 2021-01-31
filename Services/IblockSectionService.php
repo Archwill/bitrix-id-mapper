@@ -42,7 +42,7 @@ class IblockSectionService extends AbstractService implements HelperInterface
         if ($this->cacheTime > 0) {
             $this->setCachePath("/iblock_section_" . $this->iblockId);
             $this->setCacheId($this->buildCacheId());
-            return $this->cacheResult([self::class, "getSections"]);
+            return $this->cacheResult([$this, "getSections"]);
         } else {
             return $this->getSections();
         }
