@@ -2,20 +2,17 @@
 
 namespace Services;
 
-use Bitrix\Iblock\SectionTable;
-
-use Bitrix\Main\Data\Cache;
-use Services\Traits\BitrixEntityTrait;
-use Services\AbstractService;
 use Bitrix\Iblock\Model\Section;
+use Services\Traits\BitrixEntity;
+use Services\Traits\StandardEntityOperations;
 
 class IblockSectionService extends AbstractService
 {
-    use BitrixEntityTrait;
+    use BitrixEntity, StandardEntityOperations;
 
     protected static $list;
 
-    private function getCacheId()
+    private function buildCacheId()
     {
         return "iblock_section_" . implode("_", [
                 $this->iblockId,
@@ -26,29 +23,27 @@ class IblockSectionService extends AbstractService
             ]);
     }
 
-    protected function getListFromDb()
+    private function getSections()
     {
+        $result = [];
+
         if ($this->iblockId > 0) {
-
-            $cache = Cache::createInstance();
-            if ($cache->initCache($this->cacheTime, $this->getCacheId(), "/iblock_section_" . $this->iblockId)) {
-                $result = $cache->getVars();
-            } elseif ($cache->startDataCache()) {
-                $result = array();
-
-                $sectionEntity = Section::compileEntityByIblock($this->iblockId);
-
-                $query = $sectionEntity::query();
-
-                $result = $this->buildQuery($query)->fetchAll();
-
-                $cache->endDataCache($result);
-            }
-
-
-            return $result;
+            $sectionEntity = Section::compileEntityByIblock($this->iblockId);
+            $query = $sectionEntity::query();
+            $result = $this->buildQuery($query)->fetchAll();
         }
 
-        return [];
+        return $result;
+    }
+
+    protected function getListFromDb()
+    {
+        if ($this->cacheTime > 0) {
+            $this->setCachePath("/iblock_section_" . $this->iblockId);
+            $this->setCacheId($this->buildCacheId());
+            return $this->cacheResult([self::class, "getSections"]);
+        } else {
+            return $this->getSections();
+        }
     }
 }

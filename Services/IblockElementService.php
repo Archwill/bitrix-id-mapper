@@ -1,21 +1,18 @@
 <?php
 
-
 namespace Services;
 
-
 use Bitrix\Iblock\Iblock;
-use Bitrix\Main\Data\Cache;
-use Services\Traits\BitrixEntityTrait;
-use Services\AbstractService;
+use Services\Traits\BitrixEntity;
+use Services\Traits\StandardEntityOperations;
 
 class IblockElementService extends AbstractService
 {
-    use BitrixEntityTrait;
+    use BitrixEntity, StandardEntityOperations;
 
     protected static $list;
 
-    private function getCacheId()
+    private function buildCacheId()
     {
         return "iblock_element_" . implode("_", [
                 $this->iblockId,
@@ -26,28 +23,28 @@ class IblockElementService extends AbstractService
             ]);
     }
 
-    protected function getListFromDb()
+    private function getElements()
     {
+        $result = [];
+
         if ($this->iblockId > 0) {
+            $iblock = Iblock::wakeUp($this->iblockId);
+            $query = $iblock->getEntityDataClass()::query();
 
-            $cache = Cache::createInstance();
-            if ($cache->initCache($this->cacheTime, $this->getCacheId(), "/iblock_element_" . $this->iblockId)) {
-                $result = $cache->getVars();
-            } elseif ($cache->startDataCache()) {
-                $result = array();
-
-                $iblock = Iblock::wakeUp($this->iblockId);
-                $query = $iblock->getEntityDataClass()::query();
-
-                $result = $this->buildQuery($query)->fetchAll();
-
-                $cache->endDataCache($result);
-            }
-
-
-            return $result;
+            $result = $this->buildQuery($query)->fetchAll();
         }
 
-        return [];
+        return $result;
+    }
+
+    protected function getListFromDb()
+    {
+        if ($this->cacheTime > 0) {
+            $this->setCachePath("/iblock_element_" . $this->iblockId);
+            $this->setCacheId($this->buildCacheId());
+            return $this->cacheResult([self::class, "getElements"]);
+        } else {
+            return $this->getElements();
+        }
     }
 }
