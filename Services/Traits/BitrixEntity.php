@@ -71,13 +71,13 @@ trait BitrixEntity
         return $query;
     }
 
-    private function cacheResult(Callable $getResult)
+    private function cacheResult(Callable $getResultMethod)
     {
         $cache = Cache::createInstance();
         if ($cache->initCache($this->cacheTime, $this->cacheId, $this->cachePath)) {
             $result = $cache->getVars();
         } elseif ($cache->startDataCache()) {
-            $result = $getResult();
+            $result = $getResultMethod();
 
             $cache->endDataCache($result);
         }
