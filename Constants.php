@@ -1,6 +1,6 @@
 <?php
 
-use Services\DbServiceInterface;
+use Services\Interfaces\DbServiceInterface;
 
 class Constants
 {
